@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo Gallery</title>
+<style>
+  :root {
+    --bg: #0d0d10;
+    --tile-bg: #1a1a1f;
+    --text: #e8e8ea;
+    --muted: #9a9aa2;
+    --accent: #7aa2f7;
+    --gap: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    padding: 48px 20px 24px;
+  }
+  header h1 {
+    font-weight: 600;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: 0.5px;
+  }
+  header p {
+    color: var(--muted);
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+
+  /* ---- Masonry layout via CSS columns (self-organizing) ---- */
+  .gallery {
+    column-gap: var(--gap);
+    padding: 20px clamp(14px, 4vw, 48px) 60px;
+    /* Responsive column count */
+    column-count: 4;
+  }
+  @media (max-width: 1100px) { .gallery { column-count: 3; } }
+  @media (max-width: 760px)  { .gallery { column-count: 2; } }
+  @media (max-width: 460px)  { .gallery { column-count: 1; } }
+
+  .tile {
+    break-inside: avoid;
+    margin-bottom: var(--gap);
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--tile-bg);
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .tile.loaded { opacity: 1; transform: none; }
+
+  .tile img {
+    width: 100%;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .tile:hover img { transform: scale(1.05); }
+
+  /* Caption overlay on hover */
+  .tile .cap {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 28px 14px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+  .tile:hover .cap { opacity: 1; transform: none; }
+
+  /* ---- Lightbox ---- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+  }
+  .lightbox.open { opacity: 1; pointer-events: auto; }
+
+  .lightbox-inner {
+    display: flex;
+    flex-direction: column;      /* title/bio sit UNDER the image */
+    max-width: 94vw;             /* size to the image, not a fixed cap */
+    max-height: 92vh;
+    align-items: stretch;
+    background: #141418;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    transform: scale(0.96);
+    transition: transform 0.3s ease;
+  }
+  .lightbox.open .lightbox-inner { transform: scale(1); }
+
+  .lightbox-inner img {
+    max-height: 74vh;
+    max-width: 100%;             /* never wider than the container */
+    width: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    background: #000;
+  }
+
+  .lightbox-info {
+    padding: 22px 32px 30px;
+    overflow-y: auto;
+    text-align: center;
+  }
+  .lightbox-info h2 {
+    font-size: 1.00rem;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .lightbox-info h2:empty { display: none; }
+  .lightbox-info p {
+    color: var(--muted);
+    line-height: 1.65;
+    font-size: 0.98rem;
+    white-space: pre-line;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    width: 44px; height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px; height: 52px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 101;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.2); }
+  .nav-prev { left: 20px; }
+  .nav-next { right: 20px; }
+
+  @media (max-width: 720px) {
+    .lightbox-inner { max-height: 94vh; }
+    .lightbox-inner img { max-width: 94vw; max-height: 60vh; }
+    .lightbox-info { padding: 18px 22px 26px; }
+    .nav-btn { width: 44px; height: 44px; font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>My Photo Gallery</h1>
+  <p><a href="https://alex-warren.co.uk" style="color: #fff; text-decoration: underline;" target="_blank">back to alex-warren.co.uk</a></p>
+  <p>Click any photo to expand</p>
+</header>
+
+<main class="gallery" id="gallery"></main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lbClose" aria-label="Close">&times;</button>
+  <button class="nav-btn nav-prev" id="lbPrev" aria-label="Previous">&#8249;</button>
+  <div class="lightbox-inner">
+    <img id="lbImg" src="" alt="">
+    <div class="lightbox-info">
+      <h2 id="lbTitle"></h2>
+      <p id="lbBio"></p>
+    </div>
+  </div>
+  <button class="nav-btn nav-next" id="lbNext" aria-label="Next">&#8250;</button>
+</div>
+
+<!-- Generated by build-manifest.js. Loading it as a <script> (not fetch)
+     lets the gallery work even when opened directly from disk (file://). -->
+<script src="images/manifest.js"></script>
+
+<script>
+/* =====================================================================
+   HOW THIS WORKS
+   ---------------------------------------------------------------------
+   The gallery SCANS your photos by fetching "images/manifest.json".
+   That file is a list of your images with their titles and bios:
+
+     [
+       { "file": "photo1.jpg", "title": "My Title", "bio": "The story..." },
+       { "file": "sunset.png", "title": "Sunset",   "bio": "..." }
+     ]
+
+   You don't hand-write it: run  node build-manifest.js  and it scans the
+   images/ folder and (re)generates manifest.json for you, preserving any
+   titles/bios you've already written. Then commit manifest.json.
+
+   (Browsers can't list a folder directly on static hosting like GitHub
+   Pages, so a manifest is the reliable way to "scan" the images.)
+   ===================================================================== */
+
+const MANIFEST_URL = "images/manifest.json";
+
+const gallery = document.getElementById('gallery');
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbTitle = document.getElementById('lbTitle');
+const lbBio = document.getElementById('lbBio');
+const headerEl = document.querySelector('header p');
+let PHOTOS = [];
+let current = 0;
+
+// ---- Scan images by loading the manifest ----
+init();
+
+async function init() {
+  // Preferred path: manifest.js already defined window.GALLERY_MANIFEST via
+  // the <script> tag above. This works over http:// AND file://.
+  if (Array.isArray(window.GALLERY_MANIFEST)) {
+    PHOTOS = normalize(window.GALLERY_MANIFEST);
+  } else {
+    // Fallback: fetch the JSON (works when served over http://).
+    try {
+      const res = await fetch(MANIFEST_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      PHOTOS = normalize(await res.json());
+    } catch (err) {
+      showEmpty(err);
+      return;
+    }
+  }
+  if (!PHOTOS.length) { showEmpty(); return; }
+  buildTiles();
+}
+
+// Accept manifest entries as {file,...} or {src,...}.
+// Titles/bios come straight from the manifest — no filename fallback,
+// so entries you haven't captioned yet simply show no text.
+function normalize(data) {
+  const list = Array.isArray(data) ? data : (data.photos || []);
+  return list
+    .filter(p => p && (p.file || p.src))
+    .map(p => {
+      const file = p.src || ('images/' + p.file);
+      return {
+        src: file,
+        title: p.title || '',
+        bio: p.bio || ''
+      };
+    });
+}
+
+function showEmpty(err) {
+  if (headerEl) {
+    headerEl.innerHTML = err
+      ? 'No photos loaded. Add images to <code>images/</code>, run <code>node build-manifest.js</code>, and serve over http:// (not file://).'
+      : 'No photos yet — add images to the <code>images/</code> folder and run <code>node build-manifest.js</code>.';
+    headerEl.style.color = '#c77';
+  }
+  console.warn('Gallery: could not load manifest.', err || '');
+}
+
+function buildTiles() {
+  PHOTOS.forEach((photo, i) => {
+    const tile = document.createElement('a');
+    tile.className = 'tile';
+    tile.setAttribute('role', 'button');
+    tile.setAttribute('tabindex', '0');
+
+    const img = document.createElement('img');
+    img.src = photo.src;
+    img.alt = photo.title || '';
+    img.loading = 'lazy';
+    // Fade in once the image has its real dimensions (masonry self-organizes)
+    img.addEventListener('load', () => tile.classList.add('loaded'));
+    img.addEventListener('error', () => {
+      tile.classList.add('loaded');
+      tile.style.minHeight = '160px';
+      img.alt = 'Missing: ' + photo.src;
+    });
+
+    const cap = document.createElement('div');
+    cap.className = 'cap';
+    cap.textContent = photo.title || '';
+
+    tile.appendChild(img);
+    tile.appendChild(cap);
+    tile.addEventListener('click', () => openLightbox(i));
+    tile.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); }
+    });
+
+    gallery.appendChild(tile);
+  });
+}
+
+function openLightbox(i) {
+  current = i;
+  render();
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function render() {
+  const p = PHOTOS[current];
+  lbImg.src = p.src;
+  lbImg.alt = p.title || '';
+  lbTitle.textContent = p.title || '';
+  lbBio.textContent = p.bio || '';
+}
+function next() { current = (current + 1) % PHOTOS.length; render(); }
+function prev() { current = (current - 1 + PHOTOS.length) % PHOTOS.length; render(); }
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbNext').addEventListener('click', next);
+document.getElementById('lbPrev').addEventListener('click', prev);
+lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+
+document.addEventListener('keydown', (e) => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  else if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+});
+</script>
+</body>
+</html>
