@@ -1,148 +1,116 @@
 [
-    {
+  {
     "file": "zeiyb.jpeg",
     "title": "AAAI-2026 Oral Presentation at Singapore EXPO.",
-    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD"
+    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD",
+    "tag": "r"
   },
   {
     "file": "zoqju.jpeg",
     "title": "AAAI-2026 Oral Presentation at Singapore EXPO.",
-    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD"
+    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD",
+    "tag": "r"
   },
   {
     "file": "nplod.jpeg",
     "title": "Poster presentation at AAAI-2026 in Singapore.",
-    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD"
+    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD",
+    "tag": "r"
   },
   {
     "file": "yfrtx.jpeg",
     "title": "AAAI-2026 Poster Presentation at Singapore EXPO.",
-    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD"
+    "bio": "https://github.com/AlexAnthonyWarren1/MiDVMD",
+    "tag": "r"
   },
   {
     "file": "kvqwh.jpeg",
     "title": "Poster presentation at CVPR-2024 in Seattle.",
-    "bio": "https://github.com/AlexAnthonyWarren1/MG-VMD"
+    "bio": "https://github.com/AlexAnthonyWarren1/MG-VMD",
+    "tag": "r"
   },
   {
     "file": "sxxgf.jpeg",
     "title": "CVPR-24 Photo Spot at the Seattle Convention Center.",
-    "bio": ""
+    "bio": "",
+    "tag": "r"
   },
   {
     "file": "wvgoe.jpeg",
     "title": "CVPR-24 Photo Spot at the Seattle Convention Center.",
-    "bio": ""
-  },
-  {
-    "file": "ccqfs.jpeg",
-    "title": "Hong Kong",
-    "bio": ""
-  },
-  {
-    "file": "cziho.jpeg",
-    "title": "Seattle",
-    "bio": ""
-  },
-  {
-    "file": "doyxm.jpeg",
-    "title": "Chengdu",
-    "bio": ""
+    "bio": "",
+    "tag": "r"
   },
   {
     "file": "dprgt.jpeg",
     "title": "AAAI-26 Photo Spot",
-    "bio": ""
+    "bio": "",
+    "tag": "r"
+  },
+  {
+    "file": "ccqfs.jpeg",
+    "title": "Hong Kong",
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "ecjcx.jpeg",
     "title": "Singapore",
-    "bio": ""
-  },
-  {
-    "file": "ghtub.jpeg",
-    "title": "Hong Kong",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "gisbi.jpeg",
     "title": "Singapore",
-    "bio": ""
-  },
-  {
-    "file": "gptqu.jpeg",
-    "title": "Ya'an",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "hcmko.jpeg",
     "title": "Sciliy",
-    "bio": ""
-  },
-  {
-    "file": "jvhat.jpeg",
-    "title": "Hong Kong",
-    "bio": ""
-  },
-
-  {
-    "file": "kzmir.jpeg",
-    "title": "Sciliy",
-    "bio": ""
-  },
-  {
-    "file": "lrcht.jpeg",
-    "title": "Singapore",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "nkkeh.jpeg",
     "title": "Hong Kong",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
-
   {
     "file": "qyyab.jpeg",
     "title": "Sciliy",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "satup.jpeg",
     "title": "Singapore",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
-
-  {
-    "file": "vjolt.jpeg",
-    "title": "Hong Kong",
-    "bio": ""
-  },
-  {
-    "file": "wuala.jpeg",
-    "title": "Hong Kong",
-    "bio": ""
-  },
-
   {
     "file": "wvuyi.jpeg",
     "title": "Chengdu",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "xidzg.jpeg",
     "title": "Guangzhou",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
   {
     "file": "xmceh.jpeg",
     "title": "Shenzhen",
-    "bio": ""
+    "bio": "",
+    "tag": "s"
   },
-
   {
     "file": "yiqyg.jpeg",
     "title": "Hong Kong",
-    "bio": ""
-  },
-
+    "bio": "",
+    "tag": "s"
+  }
 ]
